@@ -69,6 +69,43 @@ class MainTest extends UnitTest
 		
 		assert($test1 === true);
 	}
+
+	public function testRegisterCallback3()
+	{
+		$test1 = false;
+		$test2 = false;
+		$test3 = false;
+		
+		$refClass = new ReflectClass('BreakItDown', array(true, '/', $this->dCallback));
+		
+		$breakIt = $refClass->getReflection();
+		
+		$cb = function()use (&$test1)
+		{
+			$test1 = true;
+		};
+
+		$cb2 = function()use (&$test2)
+		{
+			$test2 = true;
+		};
+
+		$cb3 = function()use (&$test3)
+		{
+			$test3 = true;
+		};
+		
+		$breakIt->registerCallback('GET', 'something', $cb);
+		$breakIt->registerCallback('GET', 'something/somewhere', $cb2);
+		$breakIt->registerCallback('GET', 'something/somewhere/somehow', $cb3);
+		
+		$breakIt->uri = "/something/somewhere";
+		$breakIt->run();
+		
+		assert($test1 === false);
+		assert($test2 === true);
+		assert($test3 === false);
+	}
 	
 	public function testUriHtaccess1()
 	{

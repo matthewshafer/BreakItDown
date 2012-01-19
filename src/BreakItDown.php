@@ -103,19 +103,28 @@ class BreakItDown
 			unset($uriArr[$tmpCt-1]);
 		}
 		
-		for($i = 0; $i < $tmpCt; $i++)
+		for($i = 0; $i <= $tmpCt; $i++)
 		{
-			if(isset($cbArr[$uriArr[$i]]))
+			//checking to see if we are at a wildcard
+			if(isset($cbArr[1]['[*]']))
 			{
-				if(is_array($cbArr[$uriArr[$i]]))
+				$callback = $cbArr[1]['[*]'][0];
+				break;
+			}
+
+			// checking to see if $i is equal to the length of the uri
+			// if it is then we have matched everything up
+			if($i === $tmpCt)
+			{
+				$callback = $cbArr[0];
+				break;
+			}
+
+			if(isset($cbArr[1][$uriArr[$i]]))
+			{
+				if(is_array($cbArr[1][$uriArr[$i]]))
 				{
-					$cbArr = &$cbArr[$uriArr[$i]];
-				}
-				else
-				{
-					$callback = $cbArr[$uriArr[$i]];
-					//var_dump($callback);
-					break;
+					$cbArr = &$cbArr[1][$uriArr[$i]];
 				}
 			}
 			else
@@ -127,10 +136,11 @@ class BreakItDown
 		// checks for a wildcard if the current value in the uri does not match
 		// something like the uri being /test/123/hey
 		// and the callback is test/[*]
-		if(isset($cbArr['[*]']))
-		{
-			$callback = $cbArr['[*]'];
-		}
+		//if(isset($cbArr['[*]']))
+		//{
+		//	var_dump($cbArr);
+		//	$callback = $cbArr['[*]'][0];
+		//}
 		// running the callback
 		
 		//var_dump($callback);
@@ -161,14 +171,15 @@ class BreakItDown
 		
 		for($i = 0; $i < $ct; $i++)
 		{
-			if(!isset($refArray[$regArr[$i]]))
+			if(!isset($refArray[1][$regArr[$i]]))
 			{
-				$refArray[$regArr[$i]] = array();
+				$refArray[1][$regArr[$i]] = array();
 			}
 			
-			$refArray = &$refArray[$regArr[$i]];
+			$refArray = &$refArray[1][$regArr[$i]];
 		}
-		$refArray = $callback;
+		$refArray[0] = $callback;
+		//var_dump($this->callbacks);
 		
 	}
 	
