@@ -150,6 +150,29 @@ class MainTest extends UnitTest
 		
 		assert($test1 === true);
 	}
+
+	public function testGetParams1()
+	{
+		$test1 = false;
+		$_SERVER['REQUEST_URI'] = "/something/somewhere?test=5";
+		
+		$refClass = new ReflectClass('BreakItDown', array(true, '/', $this->dCallback));
+		
+		$breakIt = $refClass->getReflection();
+		
+		$cb = function()use (&$test1)
+		{
+			$test1 = true;
+		};
+		
+		$breakIt->registerCallback('GET', 'something/[*]', $cb);
+		
+		//$breakIt->uri = "/something/somewhere";
+		$breakIt->run();
+		
+		assert($test1 === true);
+		assert($breakIt->uri === "/something/somewhere");
+	}
 }
 
 ?>

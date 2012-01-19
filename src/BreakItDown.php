@@ -25,7 +25,11 @@ class BreakItDown
 		$this->base = $base;
 		$this->callbacks = array('GET' => array(), 'POST' => array());
 		$this->defaultCallback = $defaultCallback;
-		$this->uri = $_SERVER['REQUEST_URI'];
+		$this->uri = strtok($_SERVER['REQUEST_URI'], '?');
+
+		// removed strtok tokens from memory
+		strtok('', '');
+		var_dump($this->uri);
 		
 		if(!$htaccess)
 		{
